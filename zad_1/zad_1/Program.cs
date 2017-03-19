@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
+using System.Collections;
 
 namespace zad_1
 {
@@ -24,6 +25,8 @@ namespace zad_1
             iris.srednia_geometryczna(iris.Dane, "Iris-setosa");
             Console.WriteLine();
             iris.srednia_harmoniczna(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.mediana(iris.Dane, "Iris-setosa");
 
 
 
@@ -151,6 +154,35 @@ class IRIS
 
         wynik = licznik / mianownik;
         Console.Write("\n" + wynik);
+    }
+    public void mediana(List<VectorClassification> dane, string etykieta)
+    {
+
+        dane.Sort((a, b) => { return a.Vector[0].CompareTo(b.Vector[0]); });
+
+
+        Console.Write("chuj\n");
+        double licznik = 0;
+        for (int i = 0; i<dane.Count; i++)
+        {
+            if (dane[i].etykieta == etykieta)
+            {
+                
+                Console.Write(dane[i].Vector[0] + "\n");
+                licznik++;
+            }
+            
+        }
+        Console.Write(licznik);
+
+        double med = 0;
+        int wielkosc = dane.Count;
+        
+        med = (dane[(wielkosc - 1) / 2].Vector[0] + dane[wielkosc/2].Vector[0])/2 ;
+        Console.Write("mediana równa się" + med);
+        Console.WriteLine();
+        
+
     }
 }
     
