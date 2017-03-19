@@ -36,26 +36,12 @@ class IRIS
                     string[] Parts = Line.Split(',');
                     List<double> Vector = new List<double>(); // 
                     for (int p = 0; p < 4; p++) Vector.Add(double.Parse(Parts[p], System.Globalization.CultureInfo.InvariantCulture));
-                    double[] Classification = new double[3];
-                    switch (Parts[4])
-                    {
-                        case "Iris-setosa":
-                            Classification[0] = 1;
-                            break;
-                        case "Iris-versicolor":
-                            Classification[1] = 1;
-                            break;
-                        case "Iris-virginica":
-                            Classification[2] = 1;
-                            break;
-                        default: throw new Exception("bad label");
-                           
-                    }
-
-
-                   Dane.Add(new VectorClassification(Vector.ToArray(), Classification));
-                   
+                    string etykieta = null;
+                    etykieta = Parts[4];
                     
+                   Dane.Add(new VectorClassification(Vector.ToArray(), etykieta));
+                   
+                  
                     
                     i++;
                     
@@ -69,38 +55,43 @@ class IRIS
                         //Console.Write(j.Vector[k]);
                         double temp = 0;
                         temp = +j.Vector[k];
-                        Console.Write(temp);
+                        //Console.Write(temp);
                     }
                         
 
                     
-                    Console.Write("\n");
+                    //Console.Write("\n");
                     
                 }
                 //Console.Write(i);
             }
         }
-        
+        foreach (var o in Dane)
+        {
+            Console.Write("kurwa " + o.etykieta + "\n" );
+
+        }
+
     }
 }
 
 class VectorClassification
 {
     public double[] Vector;
-    public double[] Classification;
-    public VectorClassification(double[] Vector, double[] Classification)
+    public string etykieta;
+    public VectorClassification(double[] Vector, string etykieta)
     {
         this.Vector = new double[Vector.Length];
-        Set(Vector, Classification);
+        Set(Vector, etykieta);
     }
-    public void Set(double[] Vector, double[] Classification)
+    public void Set(double[] Vector, string etykieta)
     {
         Vector.CopyTo(this.Vector, 0);
-        this.Classification = Classification;
+        this.etykieta = etykieta;
     }
 
     public override string ToString()
     {
-        return Classification.ToString();
+        return etykieta.ToString();
     }
 }
