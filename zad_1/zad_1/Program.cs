@@ -21,7 +21,16 @@ namespace zad_1
             Console.WriteLine();
             iris.srednia(iris.Dane, "Iris-virginica");
             Console.WriteLine();
+            iris.srednia_geometryczna(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.srednia_harmoniczna(iris.Dane, "Iris-setosa");
+
+
+
+
+
             Console.ReadKey();
+
         }
     }
 }
@@ -101,6 +110,48 @@ class IRIS
         Console.Write(licznik);
     }
 
+    public void srednia_geometryczna (List<VectorClassification> dane, string etykieta)
+    {
+        //  List<VectorClassification> dane;
+        //   dane = Dane; 
+        double iloczyn = 1;
+        double licznik = 0;
+
+        foreach (var o in dane)
+        {
+            if (o.etykieta == etykieta)
+            {
+                licznik++;
+                iloczyn *= o.Vector[0];
+            }
+
+        }
+       
+       iloczyn = Math.Pow(iloczyn,1/licznik);
+        Console.Write(iloczyn + "\n");
+        //Console.Write(licznik);
+    }
+
+
+    public void srednia_harmoniczna (List<VectorClassification> dane, string etykieta)
+    {
+        double licznik = 0;
+        double mianownik = 0;
+
+        foreach (var o in dane)
+        {
+            if (o.etykieta == etykieta)
+            {
+                licznik++;
+                mianownik += 1 / o.Vector[0];
+            }
+
+        }
+        double wynik = 0;
+
+        wynik = licznik / mianownik;
+        Console.Write("\n" + wynik);
+    }
 }
     
 
