@@ -12,7 +12,7 @@ namespace zad_1
     {
         static void Main(string[] args)
         {
-            IRIS iris = new IRIS("C:/Users/emalgpa/Desktop/dane.csv");
+            IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
             
 
             iris.srednia(iris.Dane, "Iris-setosa");
