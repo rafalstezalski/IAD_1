@@ -13,6 +13,14 @@ namespace zad_1
         static void Main(string[] args)
         {
             IRIS iris = new IRIS("C:/Users/emalgpa/Desktop/dane.csv");
+            
+
+            iris.srednia(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.srednia(iris.Dane, "Iris-versicolor");
+            Console.WriteLine();
+            iris.srednia(iris.Dane, "Iris-virginica");
+            Console.WriteLine();
             Console.ReadKey();
         }
     }
@@ -38,42 +46,65 @@ class IRIS
                     for (int p = 0; p < 4; p++) Vector.Add(double.Parse(Parts[p], System.Globalization.CultureInfo.InvariantCulture));
                     string etykieta = null;
                     etykieta = Parts[4];
-                    
-                   Dane.Add(new VectorClassification(Vector.ToArray(), etykieta));
-                   
-                  
-                    
+
+                    Dane.Add(new VectorClassification(Vector.ToArray(), etykieta));
+
+
+
                     i++;
-                    
-                  
-                  //  Console.Write(Validation[i].ToString());
+
+
+                    //  Console.Write(Validation[i].ToString());
 
                 }
-                foreach(var j in Dane)
+                foreach (var j in Dane)
                 {
-                    for (int k = 0; k < 4; k++) {
+                    for (int k = 0; k < 4; k++)
+                    {
                         //Console.Write(j.Vector[k]);
                         double temp = 0;
                         temp = +j.Vector[k];
                         //Console.Write(temp);
                     }
-                        
 
-                    
+
+
                     //Console.Write("\n");
-                    
+
                 }
                 //Console.Write(i);
             }
         }
-        foreach (var o in Dane)
+
+
+}
+
+    public void srednia(List<VectorClassification> dane, string etykieta)
+    {
+      //  List<VectorClassification> dane;
+     //   dane = Dane; 
+        double suma = 0;
+        int licznik = 0;
+        
+        foreach (var o in dane)
         {
-            Console.Write("kurwa " + o.etykieta + "\n" );
+            if (o.etykieta == etykieta)
+            {
+                licznik++;
+                suma += o.Vector[0];
+            }
 
         }
 
+        suma = suma / licznik;
+        Console.Write(suma + "\n");
+        Console.Write(licznik);
     }
+
 }
+    
+
+   
 
 class VectorClassification
 {
