@@ -26,12 +26,13 @@ namespace zad_1
             Console.WriteLine();
             iris.srednia_harmoniczna(iris.Dane, "Iris-setosa");
             Console.WriteLine();
-            iris.mediana(iris.Dane, "Iris-setosa");
-
-
-
-
-
+          //  iris.mediana(iris.Dane, "Iris-setosa");
+			Console.WriteLine();
+       		iris.wariancja(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.odchylenie_standardowe(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.mediana2(iris.Dane, "Iris-setosa");
             Console.ReadKey();
 
         }
@@ -91,7 +92,7 @@ class IRIS
 
 }
 
-    public void srednia(List<VectorClassification> dane, string etykieta)
+    public double srednia(List<VectorClassification> dane, string etykieta)
     {
       //  List<VectorClassification> dane;
      //   dane = Dane; 
@@ -109,6 +110,7 @@ class IRIS
         }
 
         suma = suma / licznik;
+        return suma;
         Console.Write(suma + "\n");
         Console.Write(licznik);
     }
@@ -160,7 +162,6 @@ class IRIS
 
         dane.Sort((a, b) => { return a.Vector[0].CompareTo(b.Vector[0]); });
 
-
         Console.Write("chuj\n");
         double licznik = 0;
         for (int i = 0; i<dane.Count; i++)
@@ -184,9 +185,77 @@ class IRIS
         
 
     }
+
+	public double wariancja(List<VectorClassification> dane, string etykieta)
+    {
+        double sumaKwadratowRoznic = 0;
+        double roznica;
+        double counter = 0;
+
+
+        foreach(var i in dane)
+        {
+            if (i.etykieta == etykieta)
+            {
+                    
+                    roznica = 0;
+                    roznica = i.Vector[0] - srednia(dane, etykieta);
+                    roznica = roznica * roznica;
+                    sumaKwadratowRoznic += roznica;
+                    counter++;
+            }
+
+        }
+
+        sumaKwadratowRoznic = sumaKwadratowRoznic / counter;
+        Console.WriteLine(sumaKwadratowRoznic);
+        return sumaKwadratowRoznic;
+    }
+
+    public double odchylenie_standardowe(List<VectorClassification> dane, string etykieta)
+    {
+        double odchylenie = Math.Sqrt(wariancja(dane, etykieta));
+        Console.WriteLine(odchylenie);
+        return odchylenie;
+    }
+
+    public double mediana2(List<VectorClassification> dane, string etykieta)
+    {
+        List<double> tempListWithValuesFromOneColumn = new List<double>();
+        double quantityOfValues = 0;
+        double median = 0;
+        int index = 0;
+
+        foreach(var i in dane)
+        {
+            if(i.etykieta == etykieta)
+            {
+                tempListWithValuesFromOneColumn.Add(i.Vector[0]);
+            }
+            
+        }
+
+        tempListWithValuesFromOneColumn.Sort();
+        quantityOfValues = tempListWithValuesFromOneColumn.Count();
+
+        if (quantityOfValues % 2 == 0)
+        {
+            quantityOfValues = quantityOfValues / 2;
+            index = Convert.ToInt32(quantityOfValues);
+            median = (tempListWithValuesFromOneColumn[index - 1] + tempListWithValuesFromOneColumn[index]) / 2;
+        }
+        else
+        {
+            quantityOfValues = quantityOfValues / 2;
+            index = Convert.ToInt32(quantityOfValues);
+            median = tempListWithValuesFromOneColumn[Convert.ToInt32(quantityOfValues)];
+        }
+
+        Console.WriteLine(median);
+        return median;
+    }
 }
     
-
    
 
 class VectorClassification
