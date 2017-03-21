@@ -27,13 +27,21 @@ namespace zad_1
             iris.srednia_harmoniczna(iris.Dane, "Iris-setosa");
             Console.WriteLine();
             iris.dominanta(iris.Dane, "Iris-setosa");
-          //  iris.mediana(iris.Dane, "Iris-setosa");
 			Console.WriteLine();
        		iris.wariancja(iris.Dane, "Iris-setosa");
             Console.WriteLine();
             iris.odchylenie_standardowe(iris.Dane, "Iris-setosa");
             Console.WriteLine();
             iris.mediana2(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.skosnosc_p1(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.skosnosc_p2(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.kwartyl1(iris.Dane, "Iris-setosa");
+            Console.WriteLine();
+            iris.kwartyl3(iris.Dane, "Iris-setosa");
+
             Console.ReadKey();
 
         }
@@ -111,9 +119,14 @@ class IRIS
         }
 
         suma = suma / licznik;
+
+        Console.WriteLine(suma + " to jest arytmetyczna");
+        
         return suma;
-        Console.Write(suma + "\n");
-        Console.Write(licznik);
+
+        
+
+        
     }
 
     public void srednia_geometryczna (List<VectorClassification> dane, string etykieta)
@@ -134,7 +147,7 @@ class IRIS
         }
        
        iloczyn = Math.Pow(iloczyn,1/licznik);
-        Console.Write(iloczyn + "\n");
+        Console.Write("to jest srednia geometryczna" + iloczyn + "\n");
         //Console.Write(licznik);
     }
 
@@ -156,11 +169,11 @@ class IRIS
         double wynik = 0;
 
         wynik = licznik / mianownik;
-        Console.Write("\n" + wynik);
+        Console.Write(" to jest srednia harmoniczna" + "\n" + wynik);
     }
 
   
-    public void dominanta(List<VectorClassification> dane, string etykieta)
+    public double dominanta(List<VectorClassification> dane, string etykieta)
     {
         List<double> listaWartosci = new List<double>();
         List<int> liczList = new List<int>();
@@ -231,50 +244,29 @@ class IRIS
        // Console.WriteLine("DOMINANTA WYNOSI " + liczba + "    "+liczbaNajwiekszychWartosci.Max());
         foreach (var i in liczbaNajwiekszychWartosci.Distinct()) /// dobre !!!
         {
-            
-            Console.WriteLine(i);
+
+            dominanta += i;
+            Console.WriteLine(i + " hdjhaskdh" );
+            Console.WriteLine(dominanta + "to jest to");
 
         }
 
-        
+        dominanta = dominanta / liczbaNajwiekszychWartosci.Distinct().Count();
+
+        Console.Write("dominanta: " + dominanta);
+
+        return dominanta;
     }
 
 
-    public void mediana(List<VectorClassification> dane, string etykieta)
-    {
-
-        dane.Sort((a, b) => { return a.Vector[0].CompareTo(b.Vector[0]); });
-
-        Console.Write("chuj\n");
-        double licznik = 0;
-        for (int i = 0; i<dane.Count; i++)
-        {
-            if (dane[i].etykieta == etykieta)
-            {
-                
-                Console.Write(dane[i].Vector[0] + "\n");
-                licznik++;
-            }
-            
-        }
-        Console.Write(licznik);
-
-        double med = 0;
-        int wielkosc = dane.Count;
-        
-        med = (dane[(wielkosc - 1) / 2].Vector[0] + dane[wielkosc/2].Vector[0])/2 ;
-        Console.Write("mediana równa się" + med);
-        Console.WriteLine();
-        
-
-    }
+   
 
 	public double wariancja(List<VectorClassification> dane, string etykieta)
     {
         double sumaKwadratowRoznic = 0;
         double roznica;
         double counter = 0;
-
+        double sred = srednia(dane, etykieta);
 
         foreach(var i in dane)
         {
@@ -282,7 +274,7 @@ class IRIS
             {
                     
                     roznica = 0;
-                    roznica = i.Vector[0] - srednia(dane, etykieta);
+                    roznica = i.Vector[0] - sred;
                     roznica = roznica * roznica;
                     sumaKwadratowRoznic += roznica;
                     counter++;
@@ -334,13 +326,123 @@ class IRIS
             median = tempListWithValuesFromOneColumn[Convert.ToInt32(quantityOfValues)];
         }
 
-        Console.WriteLine(median);
+        Console.WriteLine("to jest mediana" + median);
+        return median;
+    }
+
+
+    public double skosnosc_p1(List<VectorClassification> dane, string etykieta)
+    {
+        double srednia1 = srednia(dane, etykieta);
+        double moda = dominanta(dane, etykieta);
+        double odchylenie_stand = odchylenie_standardowe(dane, etykieta);
+
+
+        double wynik = (srednia1 - moda) / odchylenie_stand;
+
+
+
+        Console.WriteLine(wynik + " to jest p1");
+        return wynik;
+
+    }
+
+    public double skosnosc_p2(List<VectorClassification> dane, string etykieta)
+    {
+        double srednia1 = srednia(dane, etykieta);
+        double media = mediana2(dane, etykieta);
+        double odchylenie_stand = odchylenie_standardowe(dane, etykieta);
+
+
+        double wynik = 3*(srednia1 - media) / odchylenie_stand;
+       
+
+
+
+        Console.WriteLine(wynik + " to jest p2");
+        return wynik;
+
+
+    }
+
+    public double kwartyl1(List<VectorClassification> dane, string etykieta)
+    {
+        List<double> tempListWithValuesFromOneColumn = new List<double>();
+        double quantityOfValues = 0;
+        double median = 0;
+        int index = 0;
+
+        foreach (var i in dane)
+        {
+            if (i.etykieta == etykieta)
+            {
+                tempListWithValuesFromOneColumn.Add(i.Vector[0]);
+            }
+
+        }
+
+        tempListWithValuesFromOneColumn.Sort();
+        quantityOfValues = tempListWithValuesFromOneColumn.Count();
+
+        if (quantityOfValues % 2 == 0)
+        {
+
+            quantityOfValues = quantityOfValues / 4;
+            index = Convert.ToInt32(quantityOfValues);
+            median = (tempListWithValuesFromOneColumn[index - 1] + tempListWithValuesFromOneColumn[index]) / 2;
+        }
+        else
+        {
+            quantityOfValues = quantityOfValues / 4;
+            index = Convert.ToInt32(quantityOfValues);
+            median = tempListWithValuesFromOneColumn[Convert.ToInt32(quantityOfValues)];
+        }
+
+        Console.WriteLine("to jest kwartyl  -  " + median);
+        return median;
+    }
+
+
+
+    public double kwartyl3(List<VectorClassification> dane, string etykieta)
+    {
+        List<double> tempListWithValuesFromOneColumn = new List<double>();
+        double quantityOfValues = 0;
+        double median = 0;
+        int index1,index2 = 0;
+
+        foreach (var i in dane)
+        {
+            if (i.etykieta == etykieta)
+            {
+                tempListWithValuesFromOneColumn.Add(i.Vector[0]);
+            }
+
+        }
+
+        tempListWithValuesFromOneColumn.Sort();
+        quantityOfValues = tempListWithValuesFromOneColumn.Count();
+        quantityOfValues = quantityOfValues / 2;
+        index1 = Convert.ToInt32(quantityOfValues);
+        quantityOfValues = quantityOfValues / 2;
+        index2 = Convert.ToInt32(quantityOfValues);
+        if (quantityOfValues % 2 == 0)
+        {
+            median = (tempListWithValuesFromOneColumn[index1 + index2 - 1] + tempListWithValuesFromOneColumn[index1+index2]) / 2;
+        }
+        else
+        {
+            median = tempListWithValuesFromOneColumn[index1 + index2];
+        }
+
+        Console.WriteLine("to jest kwartyl 2  -  " + median);
         return median;
     }
 }
 
-    
-   
+
+
+
 
 class VectorClassification
 {
