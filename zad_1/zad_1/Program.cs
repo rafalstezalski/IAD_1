@@ -26,6 +26,7 @@ namespace zad_1
             Console.WriteLine();
             iris.srednia_harmoniczna(iris.Dane, "Iris-setosa");
             Console.WriteLine();
+            iris.dominanta(iris.Dane, "Iris-setosa");
           //  iris.mediana(iris.Dane, "Iris-setosa");
 			Console.WriteLine();
        		iris.wariancja(iris.Dane, "Iris-setosa");
@@ -157,6 +158,88 @@ class IRIS
         wynik = licznik / mianownik;
         Console.Write("\n" + wynik);
     }
+
+  
+    public void dominanta(List<VectorClassification> dane, string etykieta)
+    {
+        List<double> listaWartosci = new List<double>();
+        List<int> liczList = new List<int>();
+        List<double> liczbaNajwiekszychWartosci = new List<double>();
+        
+        
+        double maks = 0;
+        int licz = 0;
+        double liczba = 0;
+        double dominanta = 0;
+
+        foreach (var o in dane)
+        {
+
+            if (o.etykieta == etykieta)
+            {
+                listaWartosci.Add(o.Vector[0]);
+            }
+        };
+
+        listaWartosci.Sort();
+
+
+        for (int i = 0; i < listaWartosci.Count; i++)
+        {
+            licz = 0;
+            for (int j = 0; j < listaWartosci.Count; j++)
+            {
+
+                if (listaWartosci[i] == listaWartosci[j])
+                {
+                    licz++;
+
+                    liczList.Add(licz);
+                }
+                
+               
+            }
+           
+        }
+         for (int i = 0; i < listaWartosci.Count; i++)
+        {
+            licz = 0;
+            for (int j = 0; j < listaWartosci.Count; j++)
+            {
+                
+                if (listaWartosci[i] == listaWartosci[j])
+                {
+                    licz++;
+                    if (licz == liczList.Max())
+                    {
+
+                        liczbaNajwiekszychWartosci.Add(listaWartosci[i]);
+                    }
+                }
+                
+                //if (licz >maks)
+                //{
+                //    maks = licz;
+                //    liczba = listaWartosci[j];
+                //}
+
+                
+               
+            }
+           
+        }
+       // Console.WriteLine("DOMINANTA WYNOSI " + liczba + "    "+liczbaNajwiekszychWartosci.Max());
+        foreach (var i in liczbaNajwiekszychWartosci.Distinct()) /// dobre !!!
+        {
+            
+            Console.WriteLine(i);
+
+        }
+
+        
+    }
+
+
     public void mediana(List<VectorClassification> dane, string etykieta)
     {
 
@@ -255,6 +338,7 @@ class IRIS
         return median;
     }
 }
+
     
    
 
