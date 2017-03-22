@@ -15,8 +15,8 @@ namespace zad_1
         {
             IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
             List<double> listWithData = new List<double>();
-            listWithData = iris.eksportFromVector(iris.Dane, "Iris-versicolor", 0);
-            
+            listWithData = iris.eksportFromVector(iris.Dane, "Iris-setosa", 0);
+
             iris.srednia(listWithData);
             Console.WriteLine();
             iris.srednia_geometryczna(listWithData);
@@ -40,6 +40,12 @@ namespace zad_1
             iris.kwartyl3(listWithData);
             Console.WriteLine();
             iris.momentCtr(listWithData, 4);
+            Console.WriteLine();
+            iris.kurtoza(listWithData);
+            Console.WriteLine();
+            iris.odchylenie_cwiartkowe(listWithData);
+            Console.WriteLine();
+            iris.skosnos_p3(listWithData);
 
             Console.ReadKey();
         }
@@ -109,7 +115,6 @@ class IRIS
         }
 
         suma = suma / licznik;
-        Console.WriteLine(suma + " to jest arytmetyczna");  
         return suma;        
     }
 
@@ -125,7 +130,6 @@ class IRIS
         }
        
        iloczyn = Math.Pow(iloczyn,1/licznik);
-       Console.Write("to jest srednia geometryczna" + iloczyn + "\n");
        return iloczyn; 
     }
 
@@ -142,7 +146,6 @@ class IRIS
         }
 
         wynik = licznik / mianownik;
-        Console.Write(" to jest srednia harmoniczna" + "\n" + wynik);
         return wynik;
     }
  
@@ -188,13 +191,12 @@ class IRIS
             }
         }
 
-        foreach (var i in liczbaNajwiekszychWartosci.Distinct()) /// dobre !!!
+        foreach (var i in liczbaNajwiekszychWartosci.Distinct())
         {
             dominanta += i;
         }
 
         dominanta = dominanta / liczbaNajwiekszychWartosci.Distinct().Count();
-        Console.Write("dominanta: " + dominanta);
         return dominanta;
     }
 
@@ -214,15 +216,13 @@ class IRIS
                     counter++;
         }
 
-        sumaKwadratowRoznic = sumaKwadratowRoznic / counter;
-        Console.WriteLine(sumaKwadratowRoznic);
+        sumaKwadratowRoznic = sumaKwadratowRoznic / (counter - 1);
         return sumaKwadratowRoznic;
     }
 
     public double odchylenie_standardowe(List<double> dane)
     {
         double odchylenie = Math.Sqrt(wariancja(dane));
-        Console.WriteLine(odchylenie);
         return odchylenie;
     }
 
@@ -248,7 +248,6 @@ class IRIS
             median = tempListWithValuesFromOneColumn[Convert.ToInt32(quantityOfValues)];
         }
 
-        Console.WriteLine("to jest mediana" + median);
         return median;
     }
 
@@ -259,7 +258,6 @@ class IRIS
         double odchylenie_stand = odchylenie_standardowe(dane);
         double wynik = (srednia1 - moda) / odchylenie_stand;
 
-        Console.WriteLine(wynik + " to jest p1");
         return wynik;
     }
 
@@ -271,7 +269,6 @@ class IRIS
 
         double wynik = 3*(srednia1 - media) / odchylenie_stand;
        
-        Console.WriteLine(wynik + " to jest p2");
         return wynik;
     }
 
@@ -298,7 +295,6 @@ class IRIS
             median = dane[Convert.ToInt32(quantityOfValues)];
         }
 
-        Console.WriteLine("to jest kwartyl  -  " + median);
         return median;
     }
 
@@ -323,7 +319,6 @@ class IRIS
             median = dane[index1 + index2];
         }
 
-        Console.WriteLine("to jest kwartyl 2  -  " + median);
         return median;
     }
 
@@ -339,8 +334,47 @@ class IRIS
             moment += Math.Pow((i - avg), degree);
         }
         moment = moment * noOfObservations;
-        Console.WriteLine("moment centralny " + degree + " rzedu wynosi: " + moment);
         return moment;
+    }
+
+    public double kurtoza(List<double> dane)
+    {
+        double partOne = 0;
+        double partTwo = 0;
+        double partThree = 0;
+        double kurtoza = 0;
+        double n = dane.Count();
+        double s = odchylenie_standardowe(dane);
+        double x = srednia(dane);
+
+        partOne = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
+
+        foreach (var i in dane)
+        {
+            partTwo += Math.Pow(((i - x) / s), 4);
+        }
+
+        partThree = (3 * ((n - 1) * (n - 1))) / ((n - 2) * (n - 3));
+        kurtoza = partOne * partTwo - partThree;
+        return kurtoza;
+    }
+
+    public double odchylenie_cwiartkowe(List<double> dane)
+    {
+        double q3 = kwartyl3(dane);
+        double q1 = kwartyl1(dane);
+        double odchylenie = (q3 - q1) / 2;
+        return odchylenie;
+    }
+
+    public double skosnos_p3(List<double> dane)
+    {
+        double q1 = kwartyl1(dane);
+        double q3 = kwartyl3(dane);
+        double q = odchylenie_cwiartkowe(dane);
+        double m = mediana(dane);
+        double p3 = (q1 + q3 - 2 * m) / (2 * q);
+        return p3;
     }
 }
 
