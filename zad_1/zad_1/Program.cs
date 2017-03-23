@@ -14,13 +14,7 @@ namespace zad_1
         static void Main(string[] args)
         {
             IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
-            List<List<double>> listWithData = new List<List<double>>();
-
-            listWithData = iris.eksportMoreFromVector(iris.Dane);
-
-            iris.printData(listWithData);
-
-            iris.calculate(listWithData);
+            iris.start(iris.Dane);
 
             Console.ReadKey();
         }
@@ -63,13 +57,51 @@ class IRIS
         }
     }
 
+    public void start(List<VectorClassification> dane)
+    {
+        List<List<double>> irissetosa = new List<List<double>>();
+        List<List<double>> irisversicolor = new List<List<double>>();
+        List<List<double>> irisvirginica = new List<List<double>>();
+
+        irissetosa = eksportMoreFromVector(dane, "Iris-setosa");
+        irisversicolor = eksportMoreFromVector(dane, "Iris-versicolor");
+        irisvirginica = eksportMoreFromVector(dane, "Iris-virginica");
+
+ /*       Console.WriteLine("Iris-setosa");
+        printData(irissetosa);
+        Console.WriteLine("Iris-versicolor");
+        printData(irisversicolor);
+        Console.WriteLine("Iris-virginica");
+        printData(irisvirginica);
+*/
+        Console.WriteLine("Iris-setosa");
+        calculate(irissetosa);
+        Console.WriteLine("Iris-versicolor");
+        calculate(irisversicolor);
+        Console.WriteLine("Iris-virginica");
+        calculate(irisvirginica);
+    }
+      
     public void calculate(List<List<double>> data)
     {
         foreach (var i in data)
         {
-            Console.WriteLine(mediana(i));
-            Console.WriteLine(dominanta(i));
-            Console.WriteLine(kurtoza(i));
+            Console.WriteLine("Kolumna nr: " + (data.IndexOf(i)+1));
+            Console.WriteLine("Mediana: " + Math.Round( mediana(i), 2));
+            Console.WriteLine("Dominanta: " + Math.Round(dominanta(i),2));
+            Console.WriteLine("Średnia arytmetyczna: " + Math.Round(srednia(i),2));
+            Console.WriteLine("Średnia geometryczna: " + Math.Round(srednia_geometryczna(i),2));
+            Console.WriteLine("Średnia harmoniczna: " + Math.Round(srednia_harmoniczna(i),2));
+            Console.WriteLine("Kwartyl 1: " + Math.Round(kwartyl1(i),2));
+            Console.WriteLine("Kwartyl 3: " + Math.Round(kwartyl3(i),2));
+            Console.WriteLine("Wariancja: " + Math.Round(wariancja(i), 2));
+            Console.WriteLine("Odchylenie standardowe: " + Math.Round(odchylenie_standardowe(i), 2));
+            Console.WriteLine("Odchylenie ćwiartkowe: " + Math.Round(odchylenie_cwiartkowe(i), 2));
+            Console.WriteLine("Trzeci moment centralny: " + Math.Round(momentCtr(i, 3), 2));
+            Console.WriteLine("Współczynnik skośności na podstawie mediany: " + Math.Round(skosnosc_p1(i), 2));
+            Console.WriteLine("Współczynnik skośności na podstawie dominanty: " + Math.Round(skosnosc_p2(i), 2));
+            Console.WriteLine("Współczynnik skośności na podstawie odchylenia ćwiartkowego: " + Math.Round(skosnosc_p3(i), 2));
+
             Console.WriteLine();
         }
     }
@@ -89,21 +121,14 @@ class IRIS
         return tempList;
     }
 
-    public List<List<double>> eksportMoreFromVector(List<VectorClassification> dane)
+    public List<List<double>> eksportMoreFromVector(List<VectorClassification> dane, string etykieta)
     {
         List<List<double>> listWithData = new List<List<double>>();
-        List<string> names = new List<string>();
-        names.Add("Iris-setosa");
-        names.Add("Iris-versicolor");
-        names.Add("Iris-virginica");
 
-        for (int l = 0; l < names.Count(); l++)
-        {
             for (int i = 0; i < 4; i++)
             {
-                listWithData.Add(eksportFromVector(dane, names[l], i));
+                listWithData.Add(eksportFromVector(dane, etykieta, i));
             }
-        }
 
         return listWithData;
     }
@@ -385,7 +410,7 @@ class IRIS
         return odchylenie;
     }
 
-    public double skosnos_p3(List<double> dane)
+    public double skosnosc_p3(List<double> dane)
     {
         double q1 = kwartyl1(dane);
         double q3 = kwartyl3(dane);
