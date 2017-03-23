@@ -14,38 +14,13 @@ namespace zad_1
         static void Main(string[] args)
         {
             IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
-            List<double> listWithData = new List<double>();
-            listWithData = iris.eksportFromVector(iris.Dane, "Iris-setosa", 0);
+            List<List<double>> listWithData = new List<List<double>>();
 
-            iris.srednia(listWithData);
-            Console.WriteLine();
-            iris.srednia_geometryczna(listWithData);
-            Console.WriteLine();
-            iris.srednia_harmoniczna(listWithData);
-            Console.WriteLine();
-            iris.dominanta(listWithData);
-            Console.WriteLine();
-            iris.wariancja(listWithData);
-            Console.WriteLine();
-            iris.odchylenie_standardowe(listWithData);
-            Console.WriteLine();
-            iris.mediana(listWithData);
-            Console.WriteLine();
-            iris.skosnosc_p1(listWithData);
-            Console.WriteLine();
-            iris.skosnosc_p2(listWithData);
-            Console.WriteLine();
-            iris.kwartyl1(listWithData);
-            Console.WriteLine();
-            iris.kwartyl3(listWithData);
-            Console.WriteLine();
-            iris.momentCtr(listWithData, 4);
-            Console.WriteLine();
-            iris.kurtoza(listWithData);
-            Console.WriteLine();
-            iris.odchylenie_cwiartkowe(listWithData);
-            Console.WriteLine();
-            iris.skosnos_p3(listWithData);
+            listWithData = iris.eksportMoreFromVector(iris.Dane);
+
+            iris.printData(listWithData);
+
+            iris.calculate(listWithData);
 
             Console.ReadKey();
         }
@@ -88,19 +63,62 @@ class IRIS
         }
     }
 
+    public void calculate(List<List<double>> data)
+    {
+        foreach (var i in data)
+        {
+            Console.WriteLine(mediana(i));
+            Console.WriteLine(dominanta(i));
+            Console.WriteLine(kurtoza(i));
+            Console.WriteLine();
+        }
+    }
+
     public List<double> eksportFromVector(List<VectorClassification> dane, string etykieta, int column)
     {
         List<double> tempList = new List<double>();
 
         foreach(var i in dane)
         {
-            if(i.etykieta==etykieta)
-            {
-                tempList.Add(i.Vector[0]);
-            }
+                if (i.etykieta == etykieta)
+                {
+                    tempList.Add(i.Vector[column]);
+                }
         }
 
         return tempList;
+    }
+
+    public List<List<double>> eksportMoreFromVector(List<VectorClassification> dane)
+    {
+        List<List<double>> listWithData = new List<List<double>>();
+        List<string> names = new List<string>();
+        names.Add("Iris-setosa");
+        names.Add("Iris-versicolor");
+        names.Add("Iris-virginica");
+
+        for (int l = 0; l < names.Count(); l++)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                listWithData.Add(eksportFromVector(dane, names[l], i));
+            }
+        }
+
+        return listWithData;
+    }
+
+    public void printData(List<List<double>> listWithData)
+    {
+        foreach (var k in listWithData)
+        {
+            foreach (var j in k)
+            {
+                Console.Write(j + "  ");
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
     }
 
     public double srednia(List<double> dane)
@@ -399,3 +417,34 @@ class VectorClassification
         return etykieta.ToString();
     }
 }
+/*
+class OnTop
+{
+    public void start()
+    {
+        IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
+        Dictionary<string, List<List<double>>> listOfValues = new Dictionary<string, List<List<double>>>();
+        List<String> names = new List<string>();
+
+        names.Add("Iris-setosa");
+        names.Add("Iris-versicolor");
+        names.Add("Iris-virginica");
+
+        foreach (var o in iris.Dane)
+        {
+            for(int i=0; i<names.Count; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                    listOfValues.Add(names[i], iris.eksportFromVector(iris.Dane, names[i], j));
+            }
+        }
+
+        foreach(var e in listOfValues)
+        {
+            foreach(var r in e.Value)
+            {
+                Console.WriteLine(e.Key + " " + r);
+            }
+        }
+    }
+*/
