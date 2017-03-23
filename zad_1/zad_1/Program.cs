@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Collections;
+using System.Diagnostics;
 
 namespace zad_1
 {
@@ -15,6 +16,11 @@ namespace zad_1
         {
             IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
             iris.start(iris.Dane);
+            Process proc = new Process();
+
+    //        proc.StartInfo.FileName = "C:/Program Files (x86)/gnuplot/bin/wgnuplot.exe";
+
+   //         proc.Start();
 
             Console.ReadKey();
         }
@@ -67,19 +73,14 @@ class IRIS
         irisversicolor = eksportMoreFromVector(dane, "Iris-versicolor");
         irisvirginica = eksportMoreFromVector(dane, "Iris-virginica");
 
- /*       Console.WriteLine("Iris-setosa");
-        printData(irissetosa);
-        Console.WriteLine("Iris-versicolor");
-        printData(irisversicolor);
-        Console.WriteLine("Iris-virginica");
-        printData(irisvirginica);
-*/
         Console.WriteLine("Iris-setosa");
         calculate(irissetosa);
         Console.WriteLine("Iris-versicolor");
         calculate(irisversicolor);
         Console.WriteLine("Iris-virginica");
         calculate(irisvirginica);
+
+        makeHistogram(irissetosa[0], irisversicolor[0], irisvirginica[0]);
     }
       
     public void calculate(List<List<double>> data)
@@ -119,6 +120,102 @@ class IRIS
         }
 
         return tempList;
+    }
+
+    public void makeHistogram(List<double> setosa, List<double> versicolor, List<double> virginica)
+    {
+        IdentyficationList setosaa = new IdentyficationList(setosa, "Iris-setosa");
+        IdentyficationList versicolorr = new IdentyficationList(versicolor, "Iris-versicolor");
+        IdentyficationList virginicaa = new IdentyficationList(virginica, "Iris-virginica");
+        List<double> dGranice = new List<double>();
+        List<double> gGranice = new List<double>();
+        List<double> liczSetosa = new List<double>();
+        List<double> liczVersicolor = new List<double>();
+        List<double> liczVirginica = new List<double>();
+
+        List<double> max = new List<double>() ;
+
+        max.Add(setosaa.data.Max());
+        max.Add(versicolorr.data.Max());
+        max.Add(virginicaa.data.Max());
+
+        double gGranica = max.Max();
+
+        List<double> min = new List<double>();
+
+        min.Add(setosaa.data.Min());
+        min.Add(versicolorr.data.Min());
+        min.Add(virginicaa.data.Min());
+
+        double dGranica = min.Min();
+
+        //  Console.WriteLine(dGranica + " " + gGranica);
+
+        double szerokosc = (gGranica - dGranica) / 25;
+
+        //  Console.WriteLine(szerokosc);
+
+        for(var i=0; i<25; i++)
+        {
+           // Console.WriteLine(i+"  " + Math.Round(dGranica, 2));
+            dGranice.Add(dGranica);
+            dGranica += szerokosc;
+            
+        }
+
+        dGranica = min.Min();
+        for (var i = 0; i < 25; i++)
+        {
+            
+            dGranica += szerokosc;
+            gGranice.Add(dGranica);
+         //   Console.WriteLine(i + "  " + Math.Round(dGranica, 2));
+
+        }
+
+
+        for(var i = 0; i<25; i++)
+        {
+            int counter = 0;
+            for(var j=0; j<setosaa.data.Count(); j++)
+            if (setosaa.data[j]>=dGranice[i] && setosaa.data[j]<gGranice[i])
+            {
+                counter++;            
+            }
+            liczSetosa.Add(counter);
+       }
+
+        for (var i = 0; i < 25; i++)
+        {
+            int counter = 0;
+            for (var j = 0; j < versicolorr.data.Count(); j++)
+                if (versicolorr.data[j] >= dGranice[i] && versicolorr.data[j] < gGranice[i])
+                {
+                    counter++;
+                }
+            liczVersicolor.Add(counter);
+        }
+
+        for (var i = 0; i < 25; i++)
+        {
+            int counter = 0;
+            for (var j = 0; j < virginicaa.data.Count(); j++)
+                if (virginicaa.data[j] >= dGranice[i] && virginicaa.data[j] < gGranice[i])
+                {
+                    counter++;
+                }
+            liczVirginica.Add(counter);
+        }
+
+        List<string> fileOut = new List<string>();
+
+        for(var i=0; i<25; i++)
+        {
+            fileOut.Add(Math.Round(dGranice[i],2)+"\t"+Math.Round(gGranice[i],2)+"\t"+liczSetosa[i]+"\t"+liczVersicolor[i]+"\t"+liczVirginica[i]);
+        }
+
+            System.IO.File.WriteAllLines(@"~\..\..\..\data\first.dat", fileOut);
+        
     }
 
     public List<List<double>> eksportMoreFromVector(List<VectorClassification> dane, string etykieta)
@@ -442,34 +539,15 @@ class VectorClassification
         return etykieta.ToString();
     }
 }
-/*
-class OnTop
+
+class IdentyficationList
 {
-    public void start()
+    public List<double> data;
+    public string etykieta;
+
+    public IdentyficationList(List<double> data, string etykieta)
     {
-        IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
-        Dictionary<string, List<List<double>>> listOfValues = new Dictionary<string, List<List<double>>>();
-        List<String> names = new List<string>();
-
-        names.Add("Iris-setosa");
-        names.Add("Iris-versicolor");
-        names.Add("Iris-virginica");
-
-        foreach (var o in iris.Dane)
-        {
-            for(int i=0; i<names.Count; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                    listOfValues.Add(names[i], iris.eksportFromVector(iris.Dane, names[i], j));
-            }
-        }
-
-        foreach(var e in listOfValues)
-        {
-            foreach(var r in e.Value)
-            {
-                Console.WriteLine(e.Key + " " + r);
-            }
-        }
+        this.data = data;
+        this.etykieta = etykieta;
     }
-*/
+}
