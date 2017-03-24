@@ -18,11 +18,44 @@ namespace zad_1
             iris.start(iris.Dane);
             Process proc = new Process();
 
-    //        proc.StartInfo.FileName = "C:/Program Files (x86)/gnuplot/bin/wgnuplot.exe";
+            //        proc.StartInfo.FileName = "C:/Program Files (x86)/gnuplot/bin/wgnuplot.exe";
 
-   //         proc.Start();
+            //         proc.Start();
 
-            Console.ReadKey();
+            string Pgm = "C:/Program Files (x86)/gnuplot/bin/gnuplot.exe";
+            Process extPro = new Process();
+            extPro.StartInfo.FileName = Pgm;
+            extPro.StartInfo.UseShellExecute = false;
+            extPro.StartInfo.RedirectStandardInput = true;
+            extPro.Start();
+
+            StreamWriter gnupStWr = extPro.StandardInput;
+
+            gnupStWr.WriteLine("set terminal png");
+            gnupStWr.WriteLine("set terminal png transparent nocrop enhanced size 1500,1000 font 'arial, 20.0'");
+            gnupStWr.WriteLine(@"set output 'D:\IAD\IAD_1\zad_1\zad_1\data\plik.png'");
+            gnupStWr.WriteLine("set boxwidth 0.9 absolute");
+            gnupStWr.WriteLine("set style fill solid 1.00 border lt -1");
+
+            gnupStWr.WriteLine("set key inside right top vertical Right noreverse noenhanced autotitles nobox");
+            gnupStWr.WriteLine("set style histogram clustered gap 1 title offset character 0, 0, 0");
+            gnupStWr.WriteLine("set datafile missing '-'");
+            gnupStWr.WriteLine("set style data histograms");
+            gnupStWr.WriteLine("set xtics border in scale 0,0 nomirror rotate by - 90 offset character 0, 0, 0");
+            gnupStWr.WriteLine("set xtics  norangelimit");
+            gnupStWr.WriteLine("set xtics()");
+            gnupStWr.WriteLine("set xlabel 'Sepal Length'");
+            gnupStWr.WriteLine("set ylabel 'Liczebnosc'");
+            gnupStWr.WriteLine("set title 'Histogram'");
+            gnupStWr.WriteLine("set yrange[0 : 15 ] noreverse nowriteback");
+            gnupStWr.WriteLine("i = 23");
+            gnupStWr.WriteLine(@"plot 'D:\IAD\IAD_1\zad_1\zad_1\data\data1.dat' using 2:xtic(1) title 'Iris-setosa' lc rgb 'red', '' u 3 title 'Iris-versicolor' lc rgb 'green', '' u 4 title 'Iris-virginica' lc rgb 'blue'");
+
+            gnupStWr.WriteLine("set terminal wxt enhanced");
+            gnupStWr.WriteLine("set output");
+            gnupStWr.Flush();
+
+            //Console.ReadKey();
         }
     }
 }
@@ -203,7 +236,7 @@ class IRIS
 
         for(var i=0; i<25; i++)
         {
-            fileOut.Add(Math.Round(dGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) +"\t"+Math.Round(gGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "\t"+liczSetosa[i]+"\t"+liczVersicolor[i]+"\t"+liczVirginica[i]);
+            fileOut.Add(Math.Round(dGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) +"-"+Math.Round(gGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "\t"+liczSetosa[i]+"\t"+liczVersicolor[i]+"\t"+liczVirginica[i]);
         }
 
         string path = @"~\..\..\..\data\"+fileName;
