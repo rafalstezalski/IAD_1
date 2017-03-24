@@ -16,46 +16,8 @@ namespace zad_1
         {
             IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
             iris.start(iris.Dane);
-            Process proc = new Process();
 
-            //        proc.StartInfo.FileName = "C:/Program Files (x86)/gnuplot/bin/wgnuplot.exe";
-
-            //         proc.Start();
-
-            string Pgm = "C:/Program Files (x86)/gnuplot/bin/gnuplot.exe";
-            Process extPro = new Process();
-            extPro.StartInfo.FileName = Pgm;
-            extPro.StartInfo.UseShellExecute = false;
-            extPro.StartInfo.RedirectStandardInput = true;
-            extPro.Start();
-
-            StreamWriter gnupStWr = extPro.StandardInput;
-
-            gnupStWr.WriteLine("set terminal png");
-            gnupStWr.WriteLine("set terminal png transparent nocrop enhanced size 1500,1000 font 'arial, 20.0'");
-            gnupStWr.WriteLine(@"set output 'D:\IAD\IAD_1\zad_1\zad_1\data\plik.png'");
-            gnupStWr.WriteLine("set boxwidth 0.9 absolute");
-            gnupStWr.WriteLine("set style fill solid 1.00 border lt -1");
-
-            gnupStWr.WriteLine("set key inside right top vertical Right noreverse noenhanced autotitles nobox");
-            gnupStWr.WriteLine("set style histogram clustered gap 1 title offset character 0, 0, 0");
-            gnupStWr.WriteLine("set datafile missing '-'");
-            gnupStWr.WriteLine("set style data histograms");
-            gnupStWr.WriteLine("set xtics border in scale 0,0 nomirror rotate by - 90 offset character 0, 0, 0");
-            gnupStWr.WriteLine("set xtics  norangelimit");
-            gnupStWr.WriteLine("set xtics()");
-            gnupStWr.WriteLine("set xlabel 'Sepal Length'");
-            gnupStWr.WriteLine("set ylabel 'Liczebnosc'");
-            gnupStWr.WriteLine("set title 'Histogram'");
-            gnupStWr.WriteLine("set yrange[0 : 15 ] noreverse nowriteback");
-            gnupStWr.WriteLine("i = 23");
-            gnupStWr.WriteLine(@"plot 'D:\IAD\IAD_1\zad_1\zad_1\data\data1.dat' using 2:xtic(1) title 'Iris-setosa' lc rgb 'red', '' u 3 title 'Iris-versicolor' lc rgb 'green', '' u 4 title 'Iris-virginica' lc rgb 'blue'");
-
-            gnupStWr.WriteLine("set terminal wxt enhanced");
-            gnupStWr.WriteLine("set output");
-            gnupStWr.Flush();
-
-            //Console.ReadKey();
+            Console.ReadKey();
         }
     }
 }
@@ -113,11 +75,66 @@ class IRIS
         Console.WriteLine("Iris-virginica");
         calculate(irisvirginica);
 
-        for(int i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
+        {
+            string nr = "Znormalizowana różnica średnich";
+            double m1 = znormalizowanaRoSr(irissetosa[i], irisversicolor[i]);
+            Console.WriteLine(nr + " dla setosa i versicolor kolumna: \t" + (i + 1) + "\t" + Math.Abs(Math.Round(m1, 2)));
+            double m2 = znormalizowanaRoSr(irissetosa[i], irisvirginica[i]);
+            Console.WriteLine(nr + " dla setosa i virginica kolumna: \t" + (i + 1) + "\t" + Math.Abs(Math.Round(m2, 2)));
+            double m3 = znormalizowanaRoSr(irisversicolor[i], irisvirginica[i]);
+            Console.WriteLine(nr + " dla versicolor i  virginica:     \t" + (i + 1) + "\t" + Math.Abs(Math.Round(m3, 2)));
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
+        for (int i=0; i<4; i++)
         {
             makeHistogram(irissetosa[i], irisversicolor[i], irisvirginica[i], "data" + (i+1) + ".dat");
         }
-        
+
+        drawHistogram("data1.dat", "Sepal length", "wykres1.png");
+        drawHistogram("data2.dat", "Sepal width", "wykres2.png");
+        drawHistogram("data3.dat", "Petal length", "wykres3.png");
+        drawHistogram("data4.dat", "Petal width", "wykres4.png");
+    }
+
+    public void drawHistogram(string fileName, string title, string pngFileName)
+    {
+        string Pgm = "C:/Program Files (x86)/gnuplot/bin/gnuplot.exe";
+        Process extPro = new Process();
+        extPro.StartInfo.FileName = Pgm;
+        extPro.StartInfo.UseShellExecute = false;
+        extPro.StartInfo.RedirectStandardInput = true;
+        extPro.Start();
+
+        StreamWriter gnupStWr = extPro.StandardInput;
+
+        gnupStWr.WriteLine("set terminal png");
+        gnupStWr.WriteLine("set terminal png transparent nocrop enhanced size 1500,1000 font 'arial, 20.0'");
+        gnupStWr.WriteLine(@"set output 'C:\repo\iad\IAD_1\zad_1\zad_1\data\"+pngFileName+"'");
+        gnupStWr.WriteLine("set boxwidth 0.9 absolute");
+        gnupStWr.WriteLine("set style fill solid 1.00 border lt -1");
+
+        gnupStWr.WriteLine("set key inside right top vertical Right noreverse noenhanced autotitles nobox");
+        gnupStWr.WriteLine("set style histogram clustered gap 1 title offset character 0, 0, 0");
+        gnupStWr.WriteLine("set datafile missing '-'");
+        gnupStWr.WriteLine("set style data histograms");
+        gnupStWr.WriteLine("set xtics border in scale 0,0 nomirror rotate by - 90 offset character 0, 0, 0");
+        gnupStWr.WriteLine("set xtics  norangelimit");
+        gnupStWr.WriteLine("set xtics()");
+        gnupStWr.WriteLine("set xlabel '" + title + "'");
+        gnupStWr.WriteLine("set ylabel 'Liczebnosc'");
+        gnupStWr.WriteLine("set title 'Histogram'");
+        gnupStWr.WriteLine("set yrange[0 : 15 ] noreverse nowriteback");
+        gnupStWr.WriteLine("i = 23");
+        gnupStWr.WriteLine(@"plot 'C:\repo\iad\IAD_1\zad_1\zad_1\data\" + fileName + "' using 2:xtic(1) title 'Iris-setosa' lc rgb 'red', '' u 3 title 'Iris-versicolor' lc rgb 'green', '' u 4 title 'Iris-virginica' lc rgb 'blue'");
+
+        gnupStWr.WriteLine("set terminal wxt enhanced");
+        gnupStWr.WriteLine("set output");
+        gnupStWr.Flush();
+
+        extPro.Close();
     }
       
     public void calculate(List<List<double>> data)
@@ -142,6 +159,21 @@ class IRIS
 
             Console.WriteLine();
         }
+    }
+
+    public double znormalizowanaRoSr(List<double> list1, List<double> list2)
+    {
+        double m1 = srednia(list1);
+        double m2 = srednia(list2);
+        double q1 = odchylenie_standardowe(list1);
+        double q2 = odchylenie_standardowe(list2);
+        double n1 = list1.Count();
+        double n2 = list2.Count();
+        double z = 0;
+
+        z = (m1 - m2) / Math.Sqrt((Math.Pow(q1, 2) / n1 + Math.Pow(q2, 2) / n2));
+
+        return z;
     }
 
     public List<double> eksportFromVector(List<VectorClassification> dane, string etykieta, int column)
