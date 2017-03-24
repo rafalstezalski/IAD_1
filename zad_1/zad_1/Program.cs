@@ -203,7 +203,7 @@ class IRIS
 
         for(var i=0; i<25; i++)
         {
-            fileOut.Add(Math.Round(dGranice[i],2)+"\t"+Math.Round(gGranice[i],2)+"\t"+liczSetosa[i]+"\t"+liczVersicolor[i]+"\t"+liczVirginica[i]);
+            fileOut.Add(Math.Round(dGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) +"\t"+Math.Round(gGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "\t"+liczSetosa[i]+"\t"+liczVersicolor[i]+"\t"+liczVirginica[i]);
         }
 
         string path = @"~\..\..\..\data\"+fileName;
