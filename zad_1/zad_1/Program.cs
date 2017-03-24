@@ -80,7 +80,11 @@ class IRIS
         Console.WriteLine("Iris-virginica");
         calculate(irisvirginica);
 
-        makeHistogram(irissetosa[0], irisversicolor[0], irisvirginica[0]);
+        for(int i=0; i<4; i++)
+        {
+            makeHistogram(irissetosa[i], irisversicolor[i], irisvirginica[i], "data" + (i+1) + ".dat");
+        }
+        
     }
       
     public void calculate(List<List<double>> data)
@@ -122,11 +126,8 @@ class IRIS
         return tempList;
     }
 
-    public void makeHistogram(List<double> setosa, List<double> versicolor, List<double> virginica)
+    public void makeHistogram(List<double> setosa, List<double> versicolor, List<double> virginica, string fileName)
     {
-        IdentyficationList setosaa = new IdentyficationList(setosa, "Iris-setosa");
-        IdentyficationList versicolorr = new IdentyficationList(versicolor, "Iris-versicolor");
-        IdentyficationList virginicaa = new IdentyficationList(virginica, "Iris-virginica");
         List<double> dGranice = new List<double>();
         List<double> gGranice = new List<double>();
         List<double> liczSetosa = new List<double>();
@@ -135,61 +136,52 @@ class IRIS
 
         List<double> max = new List<double>() ;
 
-        max.Add(setosaa.data.Max());
-        max.Add(versicolorr.data.Max());
-        max.Add(virginicaa.data.Max());
+        max.Add(setosa.Max());
+        max.Add(versicolor.Max());
+        max.Add(virginica.Max());
 
         double gGranica = max.Max();
 
         List<double> min = new List<double>();
 
-        min.Add(setosaa.data.Min());
-        min.Add(versicolorr.data.Min());
-        min.Add(virginicaa.data.Min());
+        min.Add(setosa.Min());
+        min.Add(versicolor.Min());
+        min.Add(virginica.Min());
 
         double dGranica = min.Min();
 
-        //  Console.WriteLine(dGranica + " " + gGranica);
-
         double szerokosc = (gGranica - dGranica) / 25;
-
-        //  Console.WriteLine(szerokosc);
 
         for(var i=0; i<25; i++)
         {
-           // Console.WriteLine(i+"  " + Math.Round(dGranica, 2));
             dGranice.Add(dGranica);
-            dGranica += szerokosc;
-            
+            dGranica += szerokosc;        
         }
 
         dGranica = min.Min();
         for (var i = 0; i < 25; i++)
-        {
-            
+        { 
             dGranica += szerokosc;
             gGranice.Add(dGranica);
-         //   Console.WriteLine(i + "  " + Math.Round(dGranica, 2));
-
         }
 
 
         for(var i = 0; i<25; i++)
         {
             int counter = 0;
-            for(var j=0; j<setosaa.data.Count(); j++)
-            if (setosaa.data[j]>=dGranice[i] && setosaa.data[j]<gGranice[i])
+            for(var j=0; j<setosa.Count(); j++)
+            if (setosa[j]>=dGranice[i] && setosa[j]<gGranice[i])
             {
                 counter++;            
             }
             liczSetosa.Add(counter);
-       }
+        }
 
         for (var i = 0; i < 25; i++)
         {
             int counter = 0;
-            for (var j = 0; j < versicolorr.data.Count(); j++)
-                if (versicolorr.data[j] >= dGranice[i] && versicolorr.data[j] < gGranice[i])
+            for (var j = 0; j < versicolor.Count(); j++)
+                if (versicolor[j] >= dGranice[i] && versicolor[j] < gGranice[i])
                 {
                     counter++;
                 }
@@ -199,8 +191,8 @@ class IRIS
         for (var i = 0; i < 25; i++)
         {
             int counter = 0;
-            for (var j = 0; j < virginicaa.data.Count(); j++)
-                if (virginicaa.data[j] >= dGranice[i] && virginicaa.data[j] < gGranice[i])
+            for (var j = 0; j < virginica.Count(); j++)
+                if (virginica[j] >= dGranice[i] && virginica[j] < gGranice[i])
                 {
                     counter++;
                 }
@@ -214,8 +206,30 @@ class IRIS
             fileOut.Add(Math.Round(dGranice[i],2)+"\t"+Math.Round(gGranice[i],2)+"\t"+liczSetosa[i]+"\t"+liczVersicolor[i]+"\t"+liczVirginica[i]);
         }
 
-            System.IO.File.WriteAllLines(@"~\..\..\..\data\first.dat", fileOut);
-        
+        string path = @"~\..\..\..\data\"+fileName;
+        if (!File.Exists(path))
+        {
+            System.IO.File.WriteAllLines(path, fileOut);
+        } else
+        {
+            Console.WriteLine("File named " + fileName + " already exist. Press Y/y to override.");
+            string temp = "";
+            temp = Console.ReadLine();
+            switch(temp)
+            {
+                case "Y":
+                    System.IO.File.WriteAllLines(path, fileOut);
+                    Console.WriteLine("Succesfuly overriden.");
+                    break;
+                case "y":
+                    System.IO.File.WriteAllLines(path, fileOut);
+                    Console.WriteLine("Succesfuly overriden.");
+                    break;
+                default:
+                    Console.WriteLine("Exited without overriding.");
+                    break;
+            }
+        }      
     }
 
     public List<List<double>> eksportMoreFromVector(List<VectorClassification> dane, string etykieta)
@@ -537,17 +551,5 @@ class VectorClassification
     public override string ToString()
     {
         return etykieta.ToString();
-    }
-}
-
-class IdentyficationList
-{
-    public List<double> data;
-    public string etykieta;
-
-    public IdentyficationList(List<double> data, string etykieta)
-    {
-        this.data = data;
-        this.etykieta = etykieta;
     }
 }
