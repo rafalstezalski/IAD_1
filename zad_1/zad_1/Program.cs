@@ -129,7 +129,7 @@ class IRIS
         gnupStWr.WriteLine("set xlabel '" + title + "'");
         gnupStWr.WriteLine("set ylabel 'Liczebnosc'");
         gnupStWr.WriteLine("set title 'Histogram'");
-        gnupStWr.WriteLine("set yrange[0 : 15 ] noreverse nowriteback");
+        gnupStWr.WriteLine("set yrange[0 : 30 ] noreverse nowriteback");
         gnupStWr.WriteLine("i = 23");
         gnupStWr.WriteLine(@"plot '" + fullFilePath + "' using 2:xtic(1) title 'Iris-setosa' lc rgb 'red', '' u 3 title 'Iris-versicolor' lc rgb 'green', '' u 4 title 'Iris-virginica' lc rgb 'blue'");
 
