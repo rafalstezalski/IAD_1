@@ -101,7 +101,8 @@ class IRIS
 
     public void drawHistogram(string fileName, string title, string pngFileName)
     {
-        string Pgm = @"~\..\..\..\..\..\gnuplot\bin\gnuplot.exe";
+        string Pgm = @"~\..\..\..\..\gnuplot\bin\gnuplot.exe";
+        Console.WriteLine(Path.GetFullPath(Pgm));
         Process extPro = new Process();
         extPro.StartInfo.FileName = Pgm;
         extPro.StartInfo.UseShellExecute = false;
