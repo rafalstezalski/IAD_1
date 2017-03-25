@@ -14,7 +14,7 @@ namespace zad_1
     {
         static void Main(string[] args)
         {
-            IRIS iris = new IRIS(@"~\..\..\..\data\iris.data.csv");
+            IRIS iris = new IRIS(@"~\..\..\..\data\input\iris.data.csv");
             iris.start(iris.Dane);
 
             Console.ReadKey();
@@ -101,18 +101,21 @@ class IRIS
 
     public void drawHistogram(string fileName, string title, string pngFileName)
     {
-        string Pgm = "C:/Program Files (x86)/gnuplot/bin/gnuplot.exe";
+        string Pgm = @"~\..\..\..\..\..\gnuplot\bin\gnuplot.exe";
         Process extPro = new Process();
         extPro.StartInfo.FileName = Pgm;
         extPro.StartInfo.UseShellExecute = false;
         extPro.StartInfo.RedirectStandardInput = true;
         extPro.Start();
+        string path = @"~\..\..\..\data\output\";
+        string fullPngPath = Path.GetFullPath(path + pngFileName);
+        string fullFilePath = Path.GetFullPath(path + fileName);
 
         StreamWriter gnupStWr = extPro.StandardInput;
 
         gnupStWr.WriteLine("set terminal png");
         gnupStWr.WriteLine("set terminal png transparent nocrop enhanced size 1500,1000 font 'arial, 20.0'");
-        gnupStWr.WriteLine(@"set output 'C:\repo\iad\IAD_1\zad_1\zad_1\data\"+pngFileName+"'");
+        gnupStWr.WriteLine(@"set output '" + fullPngPath + "'");
         gnupStWr.WriteLine("set boxwidth 0.9 absolute");
         gnupStWr.WriteLine("set style fill solid 1.00 border lt -1");
 
@@ -128,7 +131,7 @@ class IRIS
         gnupStWr.WriteLine("set title 'Histogram'");
         gnupStWr.WriteLine("set yrange[0 : 15 ] noreverse nowriteback");
         gnupStWr.WriteLine("i = 23");
-        gnupStWr.WriteLine(@"plot 'C:\repo\iad\IAD_1\zad_1\zad_1\data\" + fileName + "' using 2:xtic(1) title 'Iris-setosa' lc rgb 'red', '' u 3 title 'Iris-versicolor' lc rgb 'green', '' u 4 title 'Iris-virginica' lc rgb 'blue'");
+        gnupStWr.WriteLine(@"plot '" + fullFilePath + "' using 2:xtic(1) title 'Iris-setosa' lc rgb 'red', '' u 3 title 'Iris-versicolor' lc rgb 'green', '' u 4 title 'Iris-virginica' lc rgb 'blue'");
 
         gnupStWr.WriteLine("set terminal wxt enhanced");
         gnupStWr.WriteLine("set output");
@@ -271,7 +274,7 @@ class IRIS
             fileOut.Add(Math.Round(dGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) +"-"+Math.Round(gGranice[i],2).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "\t"+liczSetosa[i]+"\t"+liczVersicolor[i]+"\t"+liczVirginica[i]);
         }
 
-        string path = @"~\..\..\..\data\"+fileName;
+        string path = @"~\..\..\..\data\output\" + fileName;
         if (!File.Exists(path))
         {
             System.IO.File.WriteAllLines(path, fileOut);
