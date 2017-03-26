@@ -7,6 +7,7 @@ using System.IO;
 using System.Drawing;
 using System.Collections;
 using System.Diagnostics;
+using MathNet.Numerics.Distributions;
 
 namespace zad_1
 {
@@ -16,6 +17,12 @@ namespace zad_1
         {
             IRIS iris = new IRIS(@"~\..\..\..\data\input\iris.data.csv");
             iris.start(iris.Dane);
+
+
+            Normal norm= new Normal();
+            double next = norm.CumulativeDistribution(1-1.96);
+            Console.WriteLine("dystriusa:  " + next);
+            
 
             Console.ReadKey();
         }
@@ -88,21 +95,80 @@ class IRIS
             Console.WriteLine();
         }
 
-        for (int i=0; i<4; i++)
+        Console.WriteLine("Would you save .dat files?");
+        string dat = Console.ReadLine();
+        switch(dat)
         {
-            makeHistogram(irissetosa[i], irisversicolor[i], irisvirginica[i], "data" + (i+1) + ".dat");
+            case "Y":
+                for (int i = 0; i < 4; i++)
+                {
+                       makeHistogram(irissetosa[i], irisversicolor[i], irisvirginica[i], "data" + (i + 1) + ".dat");
+                }
+                Console.WriteLine(".dat files saved.");
+                break;
+            case "y":
+                for (int i = 0; i < 4; i++)
+                {
+                    makeHistogram(irissetosa[i], irisversicolor[i], irisvirginica[i], "data" + (i + 1) + ".dat");
+                }
+                Console.WriteLine(".dat files saved.");
+                break;
+            default:
+                Console.WriteLine(".dat files doesn't saved");
+                break;
         }
 
-        drawHistogram("data1.dat", "Sepal length", "wykres1.png");
-        drawHistogram("data2.dat", "Sepal width", "wykres2.png");
-        drawHistogram("data3.dat", "Petal length", "wykres3.png");
-        drawHistogram("data4.dat", "Petal width", "wykres4.png");
+        Console.WriteLine("Would you make histograms?");
+        string png = Console.ReadLine();
+        switch (png)
+        { 
+            case "Y":
+                if (File.Exists(@"~\..\..\..\data\output\data1.dat"))
+                    drawHistogram("data1.dat", "Sepal length", "wykres1.png");
+                else
+                    Console.WriteLine("File data1.dat doesn't found");
+                if (File.Exists(@"~\..\..\..\data\output\data2.dat")) 
+                    drawHistogram("data2.dat", "Sepal width", "wykres2.png");
+                else
+                    Console.WriteLine("File data2.dat doesn't found");
+                if (File.Exists(@"~\..\..\..\data\output\data3.dat"))
+                    drawHistogram("data3.dat", "Petal length", "wykres3.png");
+                else
+                    Console.WriteLine("File data3.dat doesn't found");
+                if (File.Exists(@"~\..\..\..\data\output\data4.dat"))
+                    drawHistogram("data4.dat", "Petal width", "wykres4.png");
+                else
+                    Console.WriteLine("File data4.dat doesn't found");
+                Console.WriteLine("Histograms sucessfuly maked.");
+                break;
+            case "y":
+                if (File.Exists(@"~\..\..\..\data\output\data1.dat"))
+                    drawHistogram("data1.dat", "Sepal length", "wykres1.png");
+                else
+                    Console.WriteLine("File data1.dat doesn't found");
+                if (File.Exists(@"~\..\..\..\data\output\data2.dat"))
+                    drawHistogram("data2.dat", "Sepal width", "wykres2.png");
+                else
+                    Console.WriteLine("File data2.dat doesn't found");
+                if (File.Exists(@"~\..\..\..\data\output\data3.dat"))
+                    drawHistogram("data3.dat", "Petal length", "wykres3.png");
+                else
+                    Console.WriteLine("File data3.dat doesn't found");
+                if (File.Exists(@"~\..\..\..\data\output\data4.dat"))
+                    drawHistogram("data4.dat", "Petal width", "wykres4.png");
+                else
+                    Console.WriteLine("File data4.dat doesn't found");
+                Console.WriteLine("Histograms sucessfuly maked.");
+                break;
+            default:
+                Console.WriteLine("Histogram desn't created");
+                break;
+        }
     }
 
     public void drawHistogram(string fileName, string title, string pngFileName)
     {
         string Pgm = @"~\..\..\..\..\gnuplot\bin\gnuplot.exe";
-        Console.WriteLine(Path.GetFullPath(Pgm));
         Process extPro = new Process();
         extPro.StartInfo.FileName = Pgm;
         extPro.StartInfo.UseShellExecute = false;
@@ -178,6 +244,43 @@ class IRIS
         z = (m1 - m2) / Math.Sqrt((Math.Pow(q1, 2) / n1 + Math.Pow(q2, 2) / n2));
 
         return z;
+    }
+
+    public double stopnieSwobody(List<double> list1, List<double> list2)
+    {
+        double s1kw = Math.Pow(odchylenie_standardowe(list1), 2);
+        double s2kw = Math.Pow(odchylenie_standardowe(list2), 2);
+        double n1 = list1.Count();
+        double n2 = list2.Count();
+        double licznik = Math.Pow((s1kw / n1) + (s2kw / n2), 2);
+        double mianownik1 = Math.Pow((s1kw / n1), 2) / (n1 - 1);
+        double mianownik2 = Math.Pow((s2kw / n2), 2) / (n2 - 1);
+        double df = licznik / (mianownik1 + mianownik2);
+
+        return df;       
+    }
+
+    public double dystrybuantaRozkladuNormalnego(double value)
+    {
+        if (value <= -3.09) return 0.001; //poniewaz wartosc dla -3.09 wynosi 0.999
+        else
+        {
+            double a = -3.09;  
+            double h;
+            double suma = 0;
+            int n = 100;
+
+            h = (value / a) / n;
+
+            for(int i =0; i<+n; i++)
+            {
+                suma += Math.Exp(-1 * Math.Pow(a + (i - 1) * h, 2) / 2) + Math.Exp(-1 * Math.Pow(a + i * h, 2) / 2);
+            }
+
+            suma *= h / 2;
+
+            return 0.001 + suma / Math.Sqrt(2 * Math.Atan(1.0) * 4);
+        }
     }
 
     public List<double> eksportFromVector(List<VectorClassification> dane, string etykieta, int column)
