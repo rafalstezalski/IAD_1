@@ -21,7 +21,7 @@ namespace zad_1
 
             Normal norm= new Normal();
             double next = norm.CumulativeDistribution(1-1.96);
-            Console.WriteLine("dystriusa:  " + next);
+     //       Console.WriteLine("dystriusa:  " + next);
             
 
             Console.ReadKey();
@@ -86,11 +86,17 @@ class IRIS
         {
             string nr = "Znormalizowana różnica średnich";
             double m1 = znormalizowanaRoSr(irissetosa[i], irisversicolor[i]);
-            Console.WriteLine(nr + " dla setosa i versicolor kolumna: \t" + (i + 1) + "\t" + Math.Abs(Math.Round(m1, 2)));
+            Console.WriteLine(nr + " dla setosa i versicolor kolumna: \t\t" + (i + 1) + "\t" + Math.Abs(Math.Round(m1, 2)));
+            if (czyHipotezaPrawdziwa(m1, 0.05)) Console.WriteLine("Hipoteza 0 przyjęta");
+            else Console.WriteLine("Hipoteza 0 odrzucona");
             double m2 = znormalizowanaRoSr(irissetosa[i], irisvirginica[i]);
-            Console.WriteLine(nr + " dla setosa i virginica kolumna: \t" + (i + 1) + "\t" + Math.Abs(Math.Round(m2, 2)));
+            Console.WriteLine(nr + " dla setosa i virginica kolumna: \t\t" + (i + 1) + "\t" + Math.Abs(Math.Round(m2, 2)));
+            if (czyHipotezaPrawdziwa(m2, 0.05)) Console.WriteLine("Hipoteza 0 przyjęta");
+            else Console.WriteLine("Hipoteza 0 odrzucona");
             double m3 = znormalizowanaRoSr(irisversicolor[i], irisvirginica[i]);
-            Console.WriteLine(nr + " dla versicolor i  virginica:     \t" + (i + 1) + "\t" + Math.Abs(Math.Round(m3, 2)));
+            Console.WriteLine(nr + " dla versicolor i  virginica kolumna:     \t" + (i + 1) + "\t" + Math.Abs(Math.Round(m3, 2)));
+            if (czyHipotezaPrawdziwa(m3, 0.05)) Console.WriteLine("Hipoteza 0 przyjęta");
+            else Console.WriteLine("Hipoteza 0 odrzucona");
             Console.WriteLine();
             Console.WriteLine();
         }
@@ -206,6 +212,15 @@ class IRIS
 
         extPro.Close();
     }
+
+    public bool czyHipotezaPrawdziwa(double z, double alfa)
+    {
+        double p = 2 *pWartosc(-Math.Abs(z));
+        if (p < alfa)
+            return false;
+        else
+            return true;
+    }
       
     public void calculate(List<List<double>> data)
     {
@@ -230,6 +245,8 @@ class IRIS
             Console.WriteLine();
         }
     }
+
+
 
     public double znormalizowanaRoSr(List<double> list1, List<double> list2)
     {
@@ -260,27 +277,12 @@ class IRIS
         return df;       
     }
 
-    public double dystrybuantaRozkladuNormalnego(double value)
+    public double pWartosc(double value)
     {
-        if (value <= -3.09) return 0.001; //poniewaz wartosc dla -3.09 wynosi 0.999
-        else
-        {
-            double a = -3.09;  
-            double h;
-            double suma = 0;
-            int n = 100;
-
-            h = (value / a) / n;
-
-            for(int i =0; i<+n; i++)
-            {
-                suma += Math.Exp(-1 * Math.Pow(a + (i - 1) * h, 2) / 2) + Math.Exp(-1 * Math.Pow(a + i * h, 2) / 2);
-            }
-
-            suma *= h / 2;
-
-            return 0.001 + suma / Math.Sqrt(2 * Math.Atan(1.0) * 4);
-        }
+        Normal norm = new Normal();
+        double next = norm.CumulativeDistribution(value);
+    //    Console.WriteLine("dystriusa:  " + next);
+        return next;
     }
 
     public List<double> eksportFromVector(List<VectorClassification> dane, string etykieta, int column)
